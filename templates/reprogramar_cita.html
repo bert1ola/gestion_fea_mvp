@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Reprogramar cita{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ATENCIÓN PRESENCIAL</p><h1>Reprogramar cita #{{ cita.id }}</h1><p class="muted">Actualiza fecha u horario e indica el motivo del cambio.</p></div><a class="button secondary" href="{{ url_for('citas') }}">Volver a agenda</a></div>
+<section class="panel narrow-panel"><div class="notice bottom-gap">Horario actual: <strong>{{ cita.fecha_cita_texto }} · {{ cita.hora_inicio_texto }}–{{ cita.hora_fin_texto }}</strong></div>
+<form method="post" class="form-grid">
+<label class="full">Nueva fecha *<input type="date" name="fecha_cita" required value="{{ cita.fecha_cita_texto }}"></label>
+<label>Hora de inicio *<input type="time" name="hora_inicio" required step="900" value="{{ cita.hora_inicio_texto }}"></label>
+<label>Hora de término *<input type="time" name="hora_fin" required step="900" value="{{ cita.hora_fin_texto }}"></label>
+<label class="full">Motivo de reprogramación *<textarea name="motivo" required rows="3" placeholder="Indica por qué se cambia la cita"></textarea></label>
+<div class="form-actions full"><button class="button" type="submit">Guardar reprogramación</button><a class="button secondary" href="{{ url_for('citas') }}">Cancelar</a></div>
+</form></section>
+{% endblock %}

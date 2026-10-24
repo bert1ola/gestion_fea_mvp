@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Editar cliente{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">DIRECTORIO</p><h1>Editar cliente</h1><p class="muted">Actualiza los datos de contacto e identificación.</p></div><a class="button secondary" href="{{ url_for('clientes') }}">Volver</a></div>
+<section class="panel narrow-panel"><form method="post" class="form-grid">
+<label>RUT *<input name="rut" required maxlength="12" value="{{ cliente.rut }}"></label>
+<label>Nombre completo *<input name="nombre_completo" required maxlength="150" value="{{ cliente.nombre_completo }}"></label>
+<label>Correo electrónico *<input type="email" name="correo_electronico" required maxlength="320" value="{{ cliente.correo_electronico }}"></label>
+<label>Teléfono<input name="telefono" maxlength="30" value="{{ cliente.telefono or '' }}"></label>
+<label class="full">RUT empresa (opcional)<input name="rut_empresa" maxlength="12" value="{{ cliente.rut_empresa or '' }}"></label>
+<div class="form-actions full"><button class="button" type="submit">Guardar cambios</button><a class="button secondary" href="{{ url_for('clientes') }}">Cancelar</a></div>
+</form></section>
+{% endblock %}

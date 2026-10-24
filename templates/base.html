@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Gestión FEA{% endblock %} | CPC Biobío</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">FEA</span><div><strong>Gestión FEA</strong><small>CPC Biobío</small></div></div>
+    <p class="nav-label">OPERACIÓN</p>
+    <a href="{{ url_for('index') }}" class="{{ 'active' if request.endpoint == 'index' else '' }}">▦ &nbsp; Panel principal</a>
+    <a href="{{ url_for('clientes') }}" class="{{ 'active' if request.endpoint == 'clientes' else '' }}">♙ &nbsp; Clientes</a>
+    <a href="{{ url_for('solicitudes') }}" class="{{ 'active' if request.endpoint in ('solicitudes','actualizar_estado') else '' }}">▤ &nbsp; Solicitudes</a>
+    <a href="{{ url_for('citas') }}" class="{{ 'active' if request.endpoint in ('citas','reprogramar','estado_cita','historial_cita') else '' }}">▦ &nbsp; Citas presenciales</a>
+    <div class="nav-muted">✉ &nbsp; Notificaciones <small>Servicio SMTP incluido; UI pendiente</small></div>
+    <div class="sidebar-bottom"><span class="dot"></span> Sesión de desarrollo<br><small>Configura autenticación antes de publicar.</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar">
+      <div class="breadcrumb">Plataforma de Gestión FEA <span>/</span> CPC Biobío</div>
+      <div class="operator">Operadora CPC <span class="status-pill">Desarrollo</span></div>
+    </header>
+    <section class="content">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+</body>
+</html>

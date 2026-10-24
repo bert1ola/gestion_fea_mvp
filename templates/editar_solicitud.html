@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Editar solicitud{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">TRÁMITES</p><h1>Editar solicitud {{ solicitud.n_solicitud }}</h1><p class="muted">Los cambios de estado se guardan en la bitácora.</p></div><a class="button secondary" href="{{ url_for('solicitudes') }}">Volver</a></div>
+<section class="panel"><form method="post" class="form-grid request-form">
+<label>Cliente *<select name="cliente_id" required>{% for c in clientes %}<option value="{{ c.id }}" {% if c.id == solicitud.cliente_id %}selected{% endif %}>{{ c.rut }} — {{ c.nombre_completo }}</option>{% endfor %}</select></label>
+<label>N.º de solicitud *<input name="n_solicitud" required maxlength="20" value="{{ solicitud.n_solicitud }}"></label>
+<label>Tipo de trámite *<select name="tipo_tramite" required>{% for tipo in tipos %}<option value="{{ tipo }}" {% if tipo == solicitud.tipo_tramite %}selected{% endif %}>{{ tipo }}</option>{% endfor %}</select></label>
+<label>Años de vigencia *<select name="anios_vigencia" required>{% for anios in [1,2,3] %}<option value="{{ anios }}" {% if anios == solicitud.anios_vigencia %}selected{% endif %}>{{ anios }} año(s)</option>{% endfor %}</select></label>
+<label>Monto FDA (CLP)<input name="monto_fda" type="number" min="0" step="0.01" value="{{ solicitud.monto_fda if solicitud.monto_fda is not none else '' }}"></label>
+<label>N.º serie del token<input name="n_serie_token" maxlength="50" value="{{ solicitud.n_serie_token or '' }}"></label>
+<label>Fecha de aviso *<input type="datetime-local" name="fecha_aviso" required value="{{ solicitud.fecha_aviso.strftime('%Y-%m-%dT%H:%M') if solicitud.fecha_aviso else '' }}"></label>
+<label>Fecha de entrega<input type="datetime-local" name="fecha_entrega" value="{{ solicitud.fecha_entrega.strftime('%Y-%m-%dT%H:%M') if solicitud.fecha_entrega else '' }}"></label>
+<label>Fecha de caducidad<input type="datetime-local" name="fecha_caducidad" value="{{ solicitud.fecha_caducidad.strftime('%Y-%m-%dT%H:%M') if solicitud.fecha_caducidad else '' }}"></label>
+<label>Estado *<select name="estado" required>{% for e in estados %}<option value="{{ e }}" {% if e == solicitud.estado %}selected{% endif %}>{{ e }}</option>{% endfor %}</select></label>
+<label class="full">Motivo del cambio de estado (si cambia)<input name="detalle" maxlength="500" placeholder="Ej. corrección de datos ingresados"></label>
+<div class="form-actions full"><button class="button" type="submit">Guardar cambios</button><a class="button secondary" href="{{ url_for('solicitudes') }}">Cancelar</a></div>
+</form></section>
+{% endblock %}

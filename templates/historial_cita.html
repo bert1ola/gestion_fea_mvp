@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Historial de cita{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">AUDITORÍA</p><h1>Historial de cita #{{ cita_id }}</h1><p class="muted">Registro de creación, reprogramaciones y cambios de estado.</p></div><a class="button secondary" href="{{ url_for('citas') }}">Volver a agenda</a></div>
+<section class="panel"><div class="table-wrap"><table><thead><tr><th>Fecha del cambio</th><th>Acción</th><th>Horario anterior</th><th>Horario nuevo</th><th>Motivo / usuario</th></tr></thead><tbody>
+{% for h in historial %}<tr><td>{{ h.fecha_cambio }}</td><td>{{ h.accion }}</td><td>{% if h.fecha_anterior %}{{ h.fecha_anterior }}<br>{{ h.hora_inicio_anterior }}–{{ h.hora_fin_anterior }}{% else %}—{% endif %}</td><td>{% if h.fecha_nueva %}{{ h.fecha_nueva }}<br>{{ h.hora_inicio_nueva }}–{{ h.hora_fin_nueva }}{% else %}—{% endif %}</td><td>{{ h.motivo or '—' }}<br><span class="muted small">{{ h.usuario_responsable or 'sistema' }}</span></td></tr>
+{% else %}<tr><td colspan="5" class="empty">No hay movimientos para esta cita.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

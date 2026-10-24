@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Panel principal<div class="section-heading top-gap"><div><h2>Citas de hoy</h2><p class="muted">Agenda de atención presencial.</p></div><a class="text-link" href="{{ url_for('citas') }}">Abrir agenda</a></div>
+<div class="table-wrap"><table><thead><tr><th>Horario</th><th>Solicitud</th><th>Titular</th><th>Estado de cita</th></tr></thead><tbody>
+{% for c in citas_hoy %}<tr><td>{{ c.hora_inicio_texto }}–{{ c.hora_fin_texto }}</td><td>{{ c.n_solicitud }}</td><td>{{ c.nombre_completo }}</td><td><span class="badge {{ c.estado_cita|lower }}">{{ c.estado_cita }}</span></td></tr>
+{% else %}<tr><td colspan="4" class="empty">No hay citas para hoy.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">RESUMEN OPERACIONAL</p><h1>Panel principal</h1><p class="muted">Control general de solicitudes y actividad reciente.</p></div><a class="button" href="{{ url_for('solicitudes') }}">Ver solicitudes →</a></div>
+<div class="stats">
+  <article class="stat-card"><span>Clientes registrados</span><strong>{{ total_clientes }}</strong><small>En la base de datos</small></article>
+  <article class="stat-card"><span>Solicitudes registradas</span><strong>{{ total_solicitudes }}</strong><small>Total visible (máx. 300)</small></article>
+  <article class="stat-card"><span>Pendientes</span><strong>{{ pendientes }}</strong><small>Recibidas o pendientes</small></article>
+  <article class="stat-card"><span>Incidentes / revisión</span><strong>{{ errores }}</strong><small>Requieren atención</small></article>
+</div>
+<div class="section-heading"><div><h2>Actividad reciente</h2><p class="muted">Últimas solicitudes registradas.</p></div><a class="text-link" href="{{ url_for('solicitudes') }}">Ver todas</a></div>
+<div class="table-wrap"><table><thead><tr><th>N.º solicitud</th><th>RUT</th><th>Titular</th><th>Trámite</th><th>Fecha de aviso</th><th>Estado</th></tr></thead><tbody>
+{% for s in solicitudes %}
+<tr><td class="mono">{{ s.n_solicitud }}</td><td>{{ s.rut }}</td><td>{{ s.nombre_completo }}</td><td>{{ s.tipo_tramite }}{% if s.anios_vigencia %} · {{ s.anios_vigencia }} año(s){% endif %}</td><td>{{ s.fecha_aviso }}</td><td><span class="badge {{ s.estado|lower|replace(' ','-') }}">{{ s.estado }}</span></td></tr>
+{% else %}<tr><td colspan="6" class="empty">Todavía no hay solicitudes registradas.</td></tr>{% endfor %}
+</tbody></table></div>
+<div class="section-heading top-gap"><div><h2>Citas de hoy</h2><p class="muted">Agenda de atención presencial.</p></div><a class="text-link" href="{{ url_for('citas') }}">Abrir agenda</a></div>
+<div class="table-wrap"><table><thead><tr><th>Horario</th><th>Solicitud</th><th>Titular</th><th>Estado de cita</th></tr></thead><tbody>
+{% for c in citas_hoy %}<tr><td>{{ c.hora_inicio_texto }}–{{ c.hora_fin_texto }}</td><td>{{ c.n_solicitud }}</td><td>{{ c.nombre_completo }}</td><td><span class="badge {{ c.estado_cita|lower }}">{{ c.estado_cita }}</span></td></tr>
+{% else %}<tr><td colspan="4" class="empty">No hay citas para hoy.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Citas presenciales{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">ATENCIÓN PRESENCIAL</p><h1>Agenda de citas</h1><p class="muted">Planifica el retiro de tokens y evita horarios superpuestos.</p></div></div>
+<div class="two-column agenda-layout">
+<section class="panel"><div class="section-heading"><div><h2>Agendar nueva cita</h2><p class="muted">Solo solicitudes sin cita activa y cuyo token no se ha entregado.</p></div></div>
+{% if solicitudes %}
+<form method="post" class="form-grid">
+<label class="full">Solicitud / titular *<select name="solicitud_id" required><option value="">Selecciona una solicitud</option>{% for s in solicitudes %}<option value="{{ s.id }}">{{ s.n_solicitud }} — {{ s.nombre_completo }} ({{ s.rut }})</option>{% endfor %}</select></label>
+<label>Fecha *<input type="date" name="fecha_cita" required min="{{ hoy }}"></label>
+<label>Hora de inicio *<input type="time" name="hora_inicio" required step="900"></label>
+<label>Hora de término *<input type="time" name="hora_fin" required step="900"></label>
+<div class="form-actions full"><button class="button" type="submit">Agendar cita</button></div>
+</form>
+{% else %}<p class="empty">No hay solicitudes disponibles para agendar. Revisa que existan solicitudes no entregadas y sin cita activa.</p>{% endif %}
+<div class="notice top-gap"><strong>Validaciones automáticas:</strong> la hora de término debe ser posterior al inicio, no se permiten cruces con otras citas activas y una solicitud solo puede tener una cita activa.</div>
+</section>
+<section class="panel"><div class="section-heading"><div><h2>Consultar agenda</h2><p class="muted">Filtra por rango de fechas y estado.</p></div></div>
+<form method="get" class="form-grid compact-grid">
+<label>Desde<input type="date" name="desde" value="{{ desde }}" required></label>
+<label>Hasta<input type="date" name="hasta" value="{{ hasta }}" required></label>
+<label class="full">Estado<select name="estado"><option value="">Todos los estados</option>{% for e in estados_cita %}<option value="{{ e }}" {% if estado_seleccionado == e %}selected{% endif %}>{{ e }}</option>{% endfor %}</select></label>
+<div class="form-actions full"><button class="button" type="submit">Filtrar agenda</button><a class="button secondary" href="{{ url_for('citas') }}">Próximos 7 días</a></div>
+</form></section></div>
+<section class="panel"><div class="section-heading"><div><h2>Citas registradas</h2><p class="muted">{{ citas|length }} cita(s) en el rango seleccionado.</p></div></div>
+<div class="table-wrap"><table><thead><tr><th>Fecha / horario</th><th>Solicitud / titular</th><th>Contacto</th><th>Estado cita</th><th>Acciones</th></tr></thead><tbody>
+{% for c in citas %}
+<tr><td><strong>{{ c.fecha_cita_texto }}</strong><br>{{ c.hora_inicio_texto }}–{{ c.hora_fin_texto }}</td><td><strong>{{ c.n_solicitud }}</strong><br>{{ c.nombre_completo }}<br><span class="muted small">{{ c.rut }}</span></td><td>{{ c.telefono or 'Sin teléfono' }}<br><span class="muted small">{{ c.correo_electronico }}</span></td><td><span class="badge {{ c.estado_cita|lower }}">{{ c.estado_cita }}</span>{% if c.motivo_reprogramacion %}<br><span class="muted small">{{ c.motivo_reprogramacion }}</span>{% endif %}</td><td><div class="action-column">
+<a class="text-link" href="{{ url_for('historial_cita', cita_id=c.id) }}">Ver historial</a>
+{% if c.estado_cita in ('Agendada','Reprogramada') %}<a class="button compact secondary" href="{{ url_for('reprogramar', cita_id=c.id) }}">Reprogramar</a>
+<form method="post" action="{{ url_for('estado_cita', cita_id=c.id) }}" onsubmit="return confirm('¿Marcar esta cita como atendida?');"><input type="hidden" name="estado" value="Atendida"><button class="button compact" type="submit">Atendida</button></form>
+<form method="post" action="{{ url_for('estado_cita', cita_id=c.id) }}" onsubmit="return confirm('¿Cancelar esta cita?');"><input type="hidden" name="estado" value="Cancelada"><button class="button compact danger" type="submit">Cancelar</button></form>{% endif %}
+</div></td></tr>
+{% else %}<tr><td colspan="5" class="empty">No hay citas en el rango seleccionado.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

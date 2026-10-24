@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Solicitudes FEA{% endblock %}
+{% block content %}
+<div class="page-heading"><div><p class="eyebrow">TRÁMITES</p><h1>Solicitudes FEA</h1><p class="muted">Registro, seguimiento y actualización de estado.</p></div></div>
+<section class="panel"><div class="section-heading"><div><h2>Nueva solicitud manual</h2><p class="muted">Debe existir previamente el cliente.</p></div></div>
+<form method="post" class="form-grid request-form">
+<label>Cliente *<select name="cliente_id" required><option value="">Selecciona un titular</option>{% for c in clientes %}<option value="{{ c.id }}">{{ c.rut }} — {{ c.nombre_completo }}</option>{% endfor %}</select></label>
+<label>N.º de solicitud *<input name="n_solicitud" required maxlength="20" placeholder="5341522"></label>
+<label>Tipo de trámite *<select name="tipo_tramite" required>{% for tipo in tipos %}<option>{{ tipo }}</option>{% endfor %}</select></label>
+<label>Años de vigencia *<select name="anios_vigencia" required><option value="1">1 año</option><option value="2">2 años</option><option value="3">3 años</option></select></label>
+<label>Monto FDA (CLP)<input name="monto_fda" type="number" min="0" step="0.01" placeholder="26168.00"></label>
+<div class="form-actions"><button class="button" type="submit">Crear solicitud</button></div>
+</form></section>
+<section class="panel">
+<div class="section-heading"><div><h2>Listado de solicitudes</h2><p class="muted">Busca por número, RUT o titular.</p></div></div>
+<form method="get" class="search-form filters"><input name="q" value="{{ busqueda }}" placeholder="N.º solicitud, RUT o nombre"><select name="estado"><option value="">Todos los estados</option>{% for e in estados %}<option value="{{ e }}" {% if estado_seleccionado == e %}selected{% endif %}>{{ e }}</option>{% endfor %}</select><button class="button" type="submit">Aplicar filtros</button><a class="button secondary" href="{{ url_for('solicitudes') }}">Limpiar</a></form>
+<div class="table-wrap"><table><thead><tr><th>N.º solicitud / titular</th><th>Trámite</th><th>Recibido</th><th>Estado</th><th>Actualizar estado</th><th>Acciones</th></tr></thead><tbody>
+{% for s in solicitudes %}
+<tr><td><strong class="mono">{{ s.n_solicitud }}</strong><br>{{ s.nombre_completo }}<br><span class="muted small">{{ s.rut }} · {{ s.correo_electronico }}</span></td><td>{{ s.tipo_tramite }} · {{ s.anios_vigencia or '?' }} año(s)</td><td>{{ s.fecha_aviso }}</td><td><span class="badge {{ s.estado|lower|replace(' ','-') }}">{{ s.estado }}</span></td><td><form method="post" action="{{ url_for('actualizar_estado', solicitud_id=s.id) }}" class="state-form"><select name="estado" aria-label="Nuevo estado">{% for e in estados %}<option value="{{ e }}" {% if s.estado == e %}selected{% endif %}>{{ e }}</option>{% endfor %}</select><input name="detalle" placeholder="Observación (opcional)"><button class="button compact" type="submit">Guardar</button></form></td><td><div class="action-group"><a class="button compact secondary" href="{{ url_for('editar_solicitud', solicitud_id=s.id) }}">Editar</a><form method="post" action="{{ url_for('borrar_solicitud', solicitud_id=s.id) }}" onsubmit="return confirm('¿Eliminar esta solicitud? También se borrarán su historial, citas y registros de correo asociados. Esta acción no se puede deshacer.');"><button class="button compact danger" type="submit">Eliminar</button></form></div></td></tr>
+{% else %}<tr><td colspan="6" class="empty">No hay solicitudes que coincidan.</td></tr>{% endfor %}
+</tbody></table></div>
+<p class="muted small top-gap">Eliminar una solicitud también elimina sus citas, historial y notificaciones asociadas. Usa esta opción solo para corregir registros creados por error.</p>
+</section>
+{% endblock %}
